@@ -5,8 +5,7 @@ __pycache__/
 
 # Personnal data
 _previus_/
-Data/
-Data_ex/
+
 
 # C extensions
 *.so
