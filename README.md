@@ -1,81 +1,188 @@
-# 3D_printing_ERP
-Logiciel de gestion conçu pour être utilisé dans une start-up/PME dans le domaine de l'impression 3D.
+# 3D Printing ERP
+Logiciel de gestion conçu pour être utilisé dans une start-up / PME dans le domaine de l’impression 3D.
 
-============================================================================================
-Les fonctionalitées inclues sont les suivantes:
+---
+**FR, EN below**
+## ✨ Fonctionnalités
 
-  -Création et modification d'une base de donnée de matière:
-    Cette dernière permet de d'entrer les références disponibles ainsi que ses infromations (prix, fournisseur, etc..)
+- **Gestion des matières**  
+  Création et modification d’une base de données des matières.  
+  Informations incluses : référence, prix, fournisseur, etc.
+
+- **Calcul de prix pour un projet**  
+  - Basé sur une grille tarifaire (heures d’impression, conception, manutention).  
+  - Intègre le coût matière + marge souhaitée + rabais éventuel.  
+  - Sauvegarde des devis en base de données.  
+  - Génération d’un **numéro de devis unique** :  
+    ```
+    DEV-AAAA-JJMM-XXXXXX-IN
+    ```
+    - `AAAA` → année  
+    - `JJMM` → jour et mois  
+    - `XXXXXX` → compteur de devis  
+    - `IN` → initiales du client (ex. JC pour Jean Chartier)
+
+- **Suivi des devis et facturation**  
+  - Statuts disponibles : *émis*, *accepté*, *annulé*, *facturé*, *paiement reçu*.  
+  - Génération automatique de factures PDF conformes au droit suisse, payables par QR-code bancaire.  
+  - Factures prêtes à être imprimées dans une enveloppe à fenêtre A5.  
+  - Numérotation unique :  
+    ```
+    INV-AAAA-JJMM-XXXXXX-IN
+    ```
+
+---
+
+## 📂 Architecture du projet
+
+```plaintext
+ERP/                      # Dossier principal
+├─ app.py                 # Code principal
+├─ Data/                  # Données
+│  ├─ creditors.csv       # Créanciers
+│  ├─ materials.csv       # Matières
+│  ├─ quote.csv           # Devis
+│  ├─ pricing.csv         # Tarification
+│  ├─ sequence.json       # Suivi des numéros devis/factures
+│  └─ logo.png            # Logo sur les factures (optionnel)
+├─ Modules/               # Modules Python
+│  ├─ __init__.py
+│  ├─ Materials.py        # Gestion matières
+│  ├─ Calculator.py       # Calcul des prix
+│  ├─ Tracking.py         # Suivi devis
+│  ├─ Sequence.py         # Numérotation
+│  └─ Invoice_pdf.py      # Génération facture + QR-code
+└─ Invoices/              # Destination des factures PDF
+```
+
+---
+
+## 🛠️ Mode d’emploi
+
+1) Installer le projet en local  
+   Copier le dossier ERP.
+
+2) Remplir les fichiers CSV  
+   Exemple creditors.csv :
+   Prénom,Nom,Rue et numéro,NPA et ville,CH,CH12 1234 1234 1234 1234 1
+
+   Exemple pricing.csv :
+   80,15,50,3
+
+3) Lancer le programme
+   python app.py
+   → Un lien s’affiche dans la console. Ouvre-le dans ton navigateur.
+
+4) Utiliser l’interface web
+   - Matières : ajouter / supprimer des entrées, trier par matière, couleur, fournisseur.
+   - Calcul de devis : sélectionner une matière, entrer les paramètres, sauvegarder le devis.
+   - Suivi devis : changer les statuts, générer les factures.
+
+---
+
+## 📌 Remarques
+
+- Les tableaux peuvent être mis à jour en cliquant sur le bouton refresh.  
+- Des messages de confirmation s’affichent après chaque opération.  
+- Des graphiques affichent la répartition des coûts et des devis.
+- Les radios button de l`onglet matière trient le tableau, la répartition choisie est également affichée dans le graphique.  
+
+---
+
+## 📜 Licence
+
+Ce projet est distribué sous licence GNU GPL v3.0.  
+Voir le fichier LICENSE pour plus d’informations.
+
+---
+**EN**
+## ✨ Features
+
+- **Material management**  
+  Create and update a material database.  
+  Information included: reference, price, supplier, etc.
+
+- **Project price calculation**  
+  - Based on a pricing grid (printing hours, design, handling).  
+  - Includes material cost + desired margin + optional discount.  
+  - Save quotations in a database.  
+  - Generate a **unique quotation number**:
+    ```
+    DEV-YYYY-MMDD-XXXXXX-IN
+    ```
+    - `YYYY` → year  
+    - `MMDD` → month and day  
+    - `XXXXXX` → quotation counter  
+    - `IN` → client initials (e.g. JC for John Carter)
+
+- **Quotation tracking and invoicing**  
+  - Available statuses: *issued*, *accepted*, *cancelled*, *invoiced*, *payment received*.  
+  - Automatic generation of PDF invoices compliant with Swiss law, payable by QR-bank code.  
+  - Invoices ready to be printed in A5 windowed envelopes.  
+  - Unique numbering:
+    ```
+    INV-YYYY-MMDD-XXXXXX-IN
+    ```
     
-  -Calcul de prix pour un projet spécifique:
-    Le prix est calculé selon une base de tarification en fonction des heures d'impression, de conception, de manutention. 
-    Le coût matière ainsi que la marge souhaitée sur la matière sont également inclus.
-    Il est également possible d' ajouter un rabais.
-    Il est possbile d'enregister le projet en tant que devis dans une base de donnée afin d'émettre une facture par la suite.
-    Chaque devis est émis sous un numéro unique, selon une convention interne au logociel. Cette denière est la suivante
+---
 
-      DEV-AAAA-JJMM-XXXXXX-IN  où: AAAA est l'année en cours, JJ et MM le jour et le mois d'émission du devis, XXXXXX est le n ième devis émis durant l'année et IN sont les initiales du client (JC pour Jean Chartier)
+## 📂 Project structure
 
-  -Suivi des devis et facturation:
-    Possibilité d'annuler, de valider ou de facturer un devis. Un statut "paiement reçu" est également disponible.
-    Le logiciel génère automatiquement une facture au format PDF, comforme au droit suisse et payable par QR-code bancaire fonctionnel. Cette dernière est prête à être postée dans une envelope à fenêtre A5.
-    Chaque facture est émise sous un numéro unique, selon une convention interne au logociel. Cette denière est la suivante
+```plaintext
+ERP/                      # Main folder
+├─ app.py                 # Main code
+├─ Data/                  # Data folder
+│  ├─ creditors.csv       # Creditors
+│  ├─ materials.csv       # Materials
+│  ├─ quote.csv           # Quotations
+│  ├─ pricing.csv         # Pricing grid
+│  ├─ sequence.json       # Tracks quotation/invoice numbers
+│  └─ logo.png            # Logo to be displayed on invoices (optional)
+├─ Modules/               # Python modules
+│  ├─ __init__.py
+│  ├─ Materials.py        # Material management
+│  ├─ Calculator.py       # Price calculation
+│  ├─ Tracking.py         # Quotation tracking
+│  ├─ Sequence.py         # Numbering system
+│  └─ Invoice_pdf.py      # PDF invoice and QR-code generation
+└─ Invoices/              # Output folder for generated invoices
+```
 
-      INV-AAAA-JJMM-XXXXXX-IN  où: AAAA est l'année en cours, JJ et MM le jour et le mois d'émission de la facture, XXXXXX est la n ième facture émise durant l'année et IN sont les initiales du client (JC pour Jean Chartier)
-    
-============================================================================================
-Architecture:
+---
 
--ERP                # Dossier principal
-|-app.py            # Code principal
-|-Data              # Dossier données
-  |-creditors.csv   # Contient les différents créditeurs possibles
-  |-materials.csv   # Contient la base de donnée mantière
-  |-quote.csv       # Contient la base de donnée des devis
-  |-pricing.csv     # Contient la table de tarification
-  |-sequence.json   # Contient le dernier numéro attribué à un devis et à une facture pour chaque année 
-  |-logo.png        # Logo à faire figurer sur la facture, optionel
-|-Modules
-  |-__init__.py     # Script: Permet d'utiliser le dossier en tant que module, autorise les imports relatifs -> from .Sequence import get_number
-  |-Materials.py    # Script: Gère la page de gestion de la base de donnée matière
-  |-Calculator.py   # Script: Gère la page de calcul de prix
-  |-Tracking.py     # Script: Gère la page de suivi des devis
-  |-Sequence.py     # Script: Gère la numérotation des devis et des factures, gestion des accès au .json
-  |-Invoice_pdf.py  # Script: génère la facture PDF et le QR-code de paiement
-|-Invoices          # Dossier de destination des factures PDF
+## 🛠️ User guide
 
+1) Install the project locally  
+   Copy the ERP folder.
 
-============================================================================================
-Mode d'emploi:
-1) Copier le dossier ERP en local.
-2) Remplir les fichier "creditors.csv" et "pricing.csv" dans un éditeur de texte.
-     Exemple pour "creditors.csv":
-       Prénom,Nom,Rue et numéro,NPA et ville,CH,CH12 1234 1234 1234 1234 1
-   
-     Exemple pour "pricing.csv:
-       80,15,50,3
-3) Lancer le fichier app.py dans un IDE, un lien apparaît dans la console.
-4) Suive ce lien pour tomber sur la page d'accueil, le texte est modifiabler depuis le code source de "app.py".
-5) Ouvrir l'onglet matière, remplir les champs et cliquer sur "Ad to database".
-   -> Si une erreur a été commise, cliquer sur "X" de la ligne pour la supprimer.
-   -> Un message de confiramtion s'affiche sous les boutons.
-   -> Le tableau peut être trié par matière, couleur ou fournisseur à l'aide du Radio button. Ce dernier affecte également le graphique de distribution.
-   ?  Si une matière vient d'être ajoutée et qu'elle n'apparaît pas dans le tableau, mettre à jour la table en cliquant sur le bouton
-6) Ouvrir l'onglet de calcul, sélectionner une matière dans le tableau en cliquant sur la colonne de gauche de la ligne souhaitée.
-   -> Remplir les champs et cliquer sur "Save quotation" pour enregistrer le devis.
-   -> Un message de confiramtion s'affiche sous les boutons. 
-   -> Le Graphique au bas du tableau montre la proportion du coût pour chaque poste.
-   ?  Si une matière vient d'être ajoutée et qu'elle n'apparaît pas dans le tableau, mettre à jour la table en cliquant sur le bouton
-7) Ouvrir l'onglet de suivi, sélectionner un devis dans le tableau en cliquant sur la colonne de gauche de la ligne souhaitée.
-   -> Le statut du devis peut être changé de "émis" en "accepté", "annulé", "facturé" et "paiement reçu".
-   -> Lorsque le statut est changé pour "facturé", une facture est générée automatiquement dans "ERP\Invoices".
-   -> Un message de confiramtion s'affiche sous les boutons.
-   -> Le graphique montre la distribution des devis enregistrés dans la base de donnée
-   ?  Si une matière vient d'être ajoutée et qu'elle n'apparaît pas dans le tableau, mettre à jour la table en cliquant sur le bouton
+2) Fill in the CSV files  
+   Example creditors.csv:
+   Firstname,Lastname,Street and number,ZIP and City,CH,CH12 1234 1234 1234 1234 1
 
+   Example pricing.csv:
+   80,15,50,3
 
+3) Run the program  
+   python app.py  
+   → A link will appear in the console. Open it in your browser.
 
+4) Use the web interface  
+   - Materials: add / remove entries, sort by material, color, supplier.  
+   - Quotation: select a material, enter parameters, save the quotation.  
+   - Tracking: change quotation status, generate invoices.
 
+---
 
+## 📌 Notes
 
+- Tables can be updated by clicking the refresh button.  
+- Confirmation messages are displayed after each operation.  
+- Graphs display the distribution of costs and quotations.  
+- The radio buttons in the materials tab also sort the table; the chosen distribution is reflected in the graph.  
 
+---
+
+## 📜 License
+
+This project is licensed under the GNU GPL v3.0.  
+See the LICENSE file for more details.
